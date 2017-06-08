@@ -102,18 +102,18 @@ class ManualStrategy(Strategy):
         simulate.charge_index = 0
 
     def next(self):
-        if self.simulator.charge_index >= len(self.simulate.charge_list):
+        if self.simulate.charge_index >= len(self.simulate.charge_list):
             return
-        assert self.simulator.date <= self.get_cur_charge().date
-        if self.simulator.date < self.get_cur_charge().date:
+        assert self.simulate.date <= self.get_cur_charge().date
+        if self.simulate.date < self.get_cur_charge().date:
             return
 
-        while self.simulator.charge_index < len(self.simulate.charge_list) and self.simulator.date == self.get_cur_charge().date:
+        while self.simulate.charge_index < len(self.simulate.charge_list) and self.simulate.date == self.get_cur_charge().date:
             self.do_cur_charge()
-            self.simulator.charge_index += 1
+            self.simulate.charge_index += 1
 
     def get_cur_charge(self):
-        return self.simulate.charge_list[self.simulator.charge_index]
+        return self.simulate.charge_list[self.simulate.charge_index]
 
     def do_cur_charge(self):
         ci = self.get_cur_charge()
