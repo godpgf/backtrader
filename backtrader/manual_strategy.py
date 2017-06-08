@@ -70,6 +70,7 @@ class ChargeAccount(object):
             cerebro.adddata(value)
             cerebro.code2id[key] = index
             index += 1
+        cerebro.charge_list = self.charge_list
         #设置100万保证钱够用
         cerebro.setcash(1000000.0)
         cerebro.run()
@@ -96,4 +97,28 @@ class BenchmarkStrategy(Strategy):
 
 
 class ManualStrategy(Strategy):
-    pass
+    def __init__(self, simulate):
+        Strategy.__init__(self,simulate)
+        simulate.charge_index = 0
+
+    def next(self):
+        if self.simulator.charge_index >= len(self.simulate.charge_list):
+            return
+        assert self.simulator.date <= self.get_cur_charge().date
+        if self.simulator.date < self.get_cur_charge().date:
+            return
+
+        while self.simulator.charge_index < len(self.simulate.charge_list) and self.simulator.date == self.get_cur_charge().date:
+            self.do_cur_charge()
+            self.simulator.charge_index += 1
+
+    def get_cur_charge(self):
+        return self.simulate.charge_list[self.simulator.charge_index]
+
+    def do_cur_charge(self):
+        ci = self.get_cur_charge()
+        data = self.simulate.datas[self.simulate.data_dict[ci.code]]
+        if ci.size > 0:
+            self.buy(data, ci.size, data.close[0] if ci.is_close else data.open[0])
+        elif ci.size < 0:
+            self.sell(data, -ci.size, data.close[0] if ci.is_close else data.open[0])
