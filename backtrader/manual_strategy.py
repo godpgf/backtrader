@@ -117,7 +117,7 @@ class ManualStrategy(Strategy):
 
     def do_cur_charge(self):
         ci = self.get_cur_charge()
-        data = self.simulate.datas[self.simulate.data_dict[ci.code]]
+        data = self.simulate.datas[self.simulate.code2id[ci.code]]
         if ci.size > 0:
             self.buy(data, ci.size, data.close[0] if ci.is_close else data.open[0])
         elif ci.size < 0:
